@@ -1,0 +1,39 @@
+services:
+  osrm-backend:
+    image: osrm/osrm-backend
+    volumes:
+      - ./osm:/data
+      - ./profiles:/profiles
+    networks:
+      - default
+    ports:
+      - 443:5000
+    restart: unless-stopped
+    command: >
+      bash -c "
+      osrm-extract -p /profiles/foot.lua /data/berlin-latest.osm.pbf && 
+      osrm-partition /data/berlin-latest.osrm && 
+      osrm-customize /data/berlin-latest.osrm && 
+      osrm-routed \
+      --algorithm mld \
+      --max-matching-size 20000 \
+      --max-viaroute-size 20000 \
+      --max-trip-size 20000 \
+      --max-table-size 20000 \
+      /data/berlin-latest.osrm
+      "
+  osrm-frontend:
+    image: osrm/osrm-frontend
+    ports:
+      - "9966:9966"
+    environment:
+      OSRM_BACKEND: http://localhost:443
+      OSRM_CENTER: '52.51619283344776,13.377835288837753'
+      OSRM_LABEL: 'Foot'
+    depends_on:
+      - osrm-backend
+    restart: unless-stopped
+
+networks:
+  default:
+    driver: bridge
