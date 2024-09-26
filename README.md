@@ -1,6 +1,4 @@
-Simple OSRM backend + frontend.
-
-To run:
+Simple OSRM backend + frontend. To run:
 
 ```
 make
