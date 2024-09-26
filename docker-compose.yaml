@@ -11,7 +11,7 @@ services:
     restart: unless-stopped
     command: >
       bash -c "
-      osrm-extract -p /profiles/foot.lua /data/berlin-latest.osm.pbf && 
+      osrm-extract -p /profiles/driving.lua /data/berlin-latest.osm.pbf && 
       osrm-partition /data/berlin-latest.osrm && 
       osrm-customize /data/berlin-latest.osrm && 
       osrm-routed \
@@ -30,6 +30,7 @@ services:
       OSRM_BACKEND: http://localhost:443
       OSRM_CENTER: '52.51619283344776,13.377835288837753'
       OSRM_LABEL: 'Foot'
+      OSRM_ZOOM: '15'
     depends_on:
       - osrm-backend
     restart: unless-stopped
